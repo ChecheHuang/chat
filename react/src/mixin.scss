@@ -1,0 +1,32 @@
+@mixin dFlexCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@mixin circle($size, $bgColor) {
+    border-radius: 50%;
+    height: $size;
+    width: $size;
+    font-size: $size/3;
+    background: $bgColor;
+    color: white;
+}
+
+@mixin ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@mixin ipad {
+    @media (max-width:768px) {
+        @content
+    }
+}
+
+@mixin iphone {
+    @media (max-width:568px) {
+        @content
+    }
+}
