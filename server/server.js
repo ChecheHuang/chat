@@ -10,7 +10,8 @@ app.use(cors())
 app.use(express.json())
 app.use(express.static(path.join(__dirname,'/build')))
 
-app.post("/api/users/:id/update",(req,res)=>{
+app.post("/api/users/login",(req,res)=>{
+    console.log(req.body)
     setTimeout(()=>{
         res.send(req.body)
     },[2000])

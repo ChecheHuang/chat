@@ -25,8 +25,12 @@ export const userSlice = createSlice({
       state.error = true
       state.pending = false
     },
+    logout: (state) => {
+      state.pending = null
+    },
   },
 })
-export const { updateStart, updateSuccess, updateError } = userSlice.actions
+export const { updateStart, updateSuccess, updateError, logout } =
+  userSlice.actions
 
 export default userSlice.reducer

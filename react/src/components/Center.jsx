@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { updateUser } from '../redux/apiCalls'
+import { login } from '../redux/apiCalls'
 import Swal from 'sweetalert2'
+import Conversation from './Conversation'
 
 import './center.scss'
 export default function Center() {
@@ -10,7 +11,7 @@ export default function Center() {
   const dispatch = useDispatch()
   function handleUpdate(e) {
     e.preventDefault()
-    updateUser({ name }, dispatch)
+    login({ name }, dispatch)
   }
   if (pending === false) {
     Swal.fire({
@@ -20,7 +21,7 @@ export default function Center() {
       showConfirmButton: false,
       timer: 1500,
     })
-    return <div className="conversation">conversation</div>
+    return <Conversation />
   } else {
     return (
       <div className="center">
