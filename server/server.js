@@ -22,6 +22,9 @@ app.get("/*",(req,res)=>{
 io.on('connection',(socket)=>{
     console.log("a user connected")
     socket.emit("welcome",'歡迎光臨')
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
 })
 const port = 5000;
 http.listen(port,()=>{
