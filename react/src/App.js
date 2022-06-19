@@ -10,7 +10,7 @@ export default function App() {
     <>
       <Router>
         <Routes>
-          <Route exact path="/" element={<Login />} />
+          <Route exact path="/" element={<Login setUser={setUser} />} />
           <Route exact path="/chat" element={<Chat user={user} />} />
         </Routes>
       </Router>

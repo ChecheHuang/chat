@@ -6,8 +6,11 @@ import moment from 'moment'
 import { useRef } from 'react'
 import { useEffect } from 'react'
 import { io } from 'socket.io-client'
+import { useNavigate } from 'react-router-dom'
+
 export default function Chat({ user }) {
   // console.log(moment().format('lll'))
+  const navigate = useNavigate()
   const [rooms, setRooms] = useState(['test', 'test2'])
   const [receiver, setReceiver] = useState('Allen')
   const [members, setMembers] = useState(['Allen'])
@@ -16,15 +19,22 @@ export default function Chat({ user }) {
     { sender: 'Carl', receiver: 'Allen', message: 'testtest', time: '16:20' },
   ])
   const [sendMessage, setSendMessage] = useState('')
+  const [socket, setSocekt] = useState(null)
   const scrollRef = useRef()
-  const socket = useRef()
+  // const socket = useRef()
 
   useEffect(() => {
-    socket.current = io('ws://localhost:8900')
+    if (user === '') {
+      navigate('/')
+    }
+    setSocekt(io('ws://localhost:8900'))
   }, [])
   useEffect(() => {
-    socket.current.emit('addUser', user)
-  }, [user])
+    socket?.on('user', (members) => {
+      console.log(members)
+      setMembers(members)
+    })
+  }, [socket])
   useEffect(() => {
     scrollRef?.current.scrollIntoView()
   }, [messages])
