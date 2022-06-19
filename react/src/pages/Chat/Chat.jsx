@@ -1,11 +1,45 @@
 import React, { useState } from 'react'
 import './chat.scss'
 import Swal from 'sweetalert2'
-import { FcBusinessman, FcCustomerSupport } from 'react-icons/fc'
-
-export default function Chat() {
+import { FcBusinessman } from 'react-icons/fc'
+import moment from 'moment'
+import { useRef } from 'react'
+import { useEffect } from 'react'
+import { io } from 'socket.io-client'
+export default function Chat({ user }) {
+  // console.log(moment().format('lll'))
   const [rooms, setRooms] = useState(['test', 'test2'])
-  const handleAdd = async () => {
+  const [receiver, setReceiver] = useState('Allen')
+  const [members, setMembers] = useState(['Allen'])
+  const [messages, setMessages] = useState([
+    { sender: 'Allen', receiver: 'Carl', message: 'testtest', time: '16:20' },
+    { sender: 'Carl', receiver: 'Allen', message: 'testtest', time: '16:20' },
+  ])
+  const [sendMessage, setSendMessage] = useState('')
+  const scrollRef = useRef()
+  const socket = useRef()
+
+  useEffect(() => {
+    socket.current = io('ws://localhost:8900')
+  }, [])
+  useEffect(() => {
+    socket.current.emit('addUser', user)
+  }, [user])
+  useEffect(() => {
+    scrollRef?.current.scrollIntoView()
+  }, [messages])
+  function handleSendMessage() {
+    const message = {
+      sender: user,
+      receiver: receiver,
+      message: sendMessage,
+      time: moment().format('lll'),
+    }
+    const newMessages = [...messages, message]
+    setMessages(newMessages)
+    setSendMessage('')
+  }
+  async function handleAdd() {
     const { value: roomName } = await Swal.fire({
       title: '房間名稱',
       input: 'text',
@@ -31,9 +65,10 @@ export default function Chat() {
   return (
     <>
       <div className="chatWrapper">
-        <div className="top"></div>
+        <div className="top">{user}</div>
         <div className="conversation">
           <div className="left">
+            <div className="room">房間</div>
             {rooms.map((item, index) => {
               return (
                 <div key={index} className="room">
@@ -47,25 +82,49 @@ export default function Chat() {
           </div>
           <div className="center">
             <div className="messageGroup">
-              <div className="item">
-                <div className="messageTop">
-                  <div className="name">
-                    <FcBusinessman /> Carl
+              {messages.map((item, index) => {
+                const { sender, message, time } = item
+                return (
+                  <div
+                    ref={scrollRef}
+                    key={index}
+                    className={'item ' + (user === sender && 'own')}
+                  >
+                    <div className="messageTop">
+                      <div className="name">
+                        <FcBusinessman /> {sender}
+                      </div>
+                      <div className="message">{message}</div>
+                    </div>
+                    <div className="time">{time}</div>
                   </div>
-                  <div className="message">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Nostrum repellendus dignissimos obcaecati, pariatur optio
-                    praesentium suscipit officia veritatis doloremque quam,
-                    aliquam soluta. Fugit hic minus cumque quae optio impedit
-                    aspernatur!
-                  </div>
-                </div>
-                <div className="time">"16:50"</div>
-              </div>
+                )
+              })}
             </div>
-            <div className="send"></div>
+            <div className="send">
+              <textarea
+                onChange={(e) => {
+                  setSendMessage(e.target.value)
+                }}
+                value={sendMessage}
+                name=""
+                id=""
+                cols="30"
+                rows="10"
+              ></textarea>
+              <button onClick={handleSendMessage}>送出</button>
+            </div>
           </div>
-          <div className="right"></div>
+          <div className="right">
+            <div className="member">線上成員</div>
+            {members.map((item, index) => {
+              return (
+                <div key={index} className="member">
+                  {item}
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
     </>
